@@ -1,18 +1,22 @@
 package core
 
 import (
-	"bufio"
 	"fmt"
 	"os"
-	"regexp"
 
 	"github.com/atotto/clipboard"
+	"mvdan.cc/xurls/v2"
 )
 
 type ClipboardURLProvider struct{}
 
 func (p ClipboardURLProvider) GetURL() (string, error) {
-	return clipboard.ReadAll()
+	content, err := clipboard.ReadAll()
+	if err != nil {
+		return "", err
+	}
+
+	return extractFirstURL([]byte(content))
 }
 
 type FileURLProvider struct {
@@ -20,28 +24,19 @@ type FileURLProvider struct {
 }
 
 func (p FileURLProvider) GetURL() (string, error) {
-	file, err := os.Open(p.Path)
+	content, err := os.ReadFile(p.Path)
 	if err != nil {
-		fmt.Printf("Error opening file: %v\n", err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-
-	urlPattern := regexp.MustCompile(`https?://[^\s]+`)
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		match := urlPattern.FindString(line)
-		if match != "" {
-			return match, nil
-		}
+		return "", fmt.Errorf("error reading file: %v", err)
 	}
 
-	if err := scanner.Err(); err != nil {
-		fmt.Printf("Error reading file: %v\n", err)
-	}
+	return extractFirstURL(content)
+}
 
-	return "", fmt.Errorf("no URL found in the file")
+func extractFirstURL(content []byte) (string, error) {
+	rx := xurls.Strict()
+	urls := rx.FindAll(content, -1)
+	if len(urls) == 0 {
+		return "", fmt.Errorf("no URL found")
+	}
+	return string(urls[0]), nil
 }
