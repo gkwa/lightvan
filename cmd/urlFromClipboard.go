@@ -5,10 +5,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var helloCmd = &cobra.Command{
-	Use:   "hello",
-	Short: "Extract URL components from clipboard",
-	Long:  `Extracts and displays components of a URL stored in the clipboard.`,
+var urlFromClipboardCmd = &cobra.Command{
+	Use:     "url-from-clipboard",
+	Aliases: []string{"ufc"},
+	Short:   "Extract URL components from clipboard",
+	Long:    `Extracts and displays components of a URL stored in the clipboard.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		provider := core.ClipboardURLProvider{}
 		err := core.ExtractURL(cmd.Context(), provider)
@@ -20,5 +21,5 @@ var helloCmd = &cobra.Command{
 }
 
 func init() {
-	rootCmd.AddCommand(helloCmd)
+	rootCmd.AddCommand(urlFromClipboardCmd)
 }
