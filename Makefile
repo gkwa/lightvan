@@ -87,6 +87,10 @@ vet: .timestamps/.vet.time
 install: imports
 	go install -ldflags "$(LDFLAGS)"
 
+.PHONY: test # go test
+test: 
+	go test ./...
+
 .PHONY: help # show makefile rules
 help:
 	@grep '^.PHONY: .* #' Makefile | sed 's/\.PHONY: \(.*\) # \(.*\)/\1 \2/' | expand -t20
