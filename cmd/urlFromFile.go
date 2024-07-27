@@ -14,11 +14,11 @@ var urlFromFileCmd = &cobra.Command{
 	Long:    `Extract url from file path by looping over file finding first regex match`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
-			cmd.PrintErrln("Error: File path is required")
 			err := cmd.Usage()
 			if err != nil {
 				cmd.PrintErrf("Error: %v\n", err)
 			}
+			cmd.PrintErrln("Error: File path is required")
 			os.Exit(1)
 		}
 
