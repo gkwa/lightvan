@@ -2,7 +2,7 @@ module github.com/gkwa/lightvan
 
 go 1.25.6
 
-toolchain go1.26.0
+toolchain go1.26.1
 
 require (
 	github.com/atotto/clipboard v0.1.4
